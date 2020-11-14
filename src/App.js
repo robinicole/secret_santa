@@ -1,12 +1,12 @@
 import { Component, Fragment} from "react"; 
-import BourreauVictimesCreation from './pages/createBourreauVictimes'
+import SecretSantaComponent from './pages/secretSanta'
 
 class App extends Component {
   render() {
     return (
       <Fragment>
     <h1> Secret Santa</h1>
-    <BourreauVictimesCreation/>
+    <SecretSantaComponent/>
     </Fragment>
     )
   }

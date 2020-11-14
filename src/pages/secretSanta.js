@@ -13,7 +13,7 @@ function shuffleArray(array) {
   }
   return array 
 }
-class BourreauVictimesCreation extends Component {
+class SecretSantaComponent extends Component {
     state = {
       participants: [
         {name: 'robin1', mail: 'rob@rob.com'},
@@ -92,6 +92,7 @@ class BourreauVictimesCreation extends Component {
       {this.state.participants.map((e, ix) =>  <li key={ix}> {e.name}, {e.mail}  <button onClick={() => this.removeParticipant(ix)}> DELETE </button> </li>)} 
       </ul>
       <button onClick={() => this.handleDrawBourreauVictime()}> Draw a secret santa </button>
+      <h2>Our list of secret santa</h2>
       <ul>
         {this.state.participantMatchingToDisplay}
       </ul>
@@ -100,4 +101,4 @@ class BourreauVictimesCreation extends Component {
   }
 }
 
-export default BourreauVictimesCreation;
+export default SecretSantaComponent;

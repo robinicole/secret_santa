@@ -1,5 +1,7 @@
 import { Component } from "react"; 
-import OneDraw from '../components/oneDraw'
+import OneParticipantMatching from '../components/oneParticipantMatching'
+
+// TODO: Those functions should be moved to a utils file 
 function emailIsValid (email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
@@ -13,7 +15,7 @@ function shuffleArray(array) {
 }
 class BourreauVictimesCreation extends Component {
     state = {
-      people: [
+      participants: [
         {name: 'robin1', mail: 'rob@rob.com'},
         {name: 'robin2', mail: 'rob@rob.com'},
         {name: 'robin3', mail: 'rob@rob.com'},
@@ -22,41 +24,37 @@ class BourreauVictimesCreation extends Component {
       ], 
       name: '',
       mail: '', 
-      shuffled_list: []
+      shuffledParticipants: [],
+      participantMatchingToDisplay: null 
   }
-  removePerson(ix)
+  removeParticipant(ix)
   {
-    this.state.people.splice(ix, 1)
-    this.setState({people: this.state.people, shuffled_list: []})
+    this.state.participants.splice(ix, 1)
+    this.setState({participants: this.state.participants, participantMatchingToDisplay: []})
 
   }
-  renderVisitors()
-  {
-  return this.state.people.map((e, ix) =>  <li key={ix}> {e.name}, {e.mail}  <button onClick={() => this.removePerson(ix)}> DELETE </button> </li>)
-  }
-  onChange(e)
+  onParticipantInputChange(e)
   {
     let new_state = {}
     new_state[e.target.name] = e.target.value
     this.setState(new_state)
   }
 
-  renderBoureauVictimes()
+  setupParticipantMatching(participants)
   {
-    let to_process = this.state.shuffled_list ;
-    let to_display = to_process.map((val, ix) => 
-    <OneDraw key={ix} ix={ix} offer={to_process[ix]} receiver={to_process[(ix + 1) % to_process.length]}/>
+    let participantMatching = participants.map((val, ix) => 
+      <OneParticipantMatching key={ix} ix={ix} offer={participants[ix]} receiver={participants[(ix + 1) % participants.length]}/>
     )
-    shuffleArray(to_display)
-    return to_display
+    shuffleArray(participantMatching) // We reshuffle the participants before displaying them
+    this.setState({participantMatchingToDisplay: [...participantMatching]})
   }
 
   handleDrawBourreauVictime()
   {
-    let people = [...this.state.people]
-    shuffleArray(people)
-    console.log(people)
-    this.setState({shuffled_list: people})
+    let participants = [...this.state.participants]
+    shuffleArray(participants)
+    this.setState({shuffledParticipants: participants})
+    this.setupParticipantMatching(participants)
   }
 
 
@@ -65,7 +63,7 @@ class BourreauVictimesCreation extends Component {
     let people = {name: this.state.name, mail: this.state.mail}
     if (true) // (emailIsValid(this.state.mail)) TODO: during the test phase we do not check for valid mail
     {
-    this.setState({people: [...this.state.people, people], name: '', mail: '', shuffled_list: []})
+    this.setState({participants: [...this.state.participants, people], name: '', mail: '', shuffledParticipants: [], participantMatchingToDisplay:[]})
     }
     else
     {
@@ -75,21 +73,27 @@ class BourreauVictimesCreation extends Component {
   render() {
   return (
     <div>
+      <h2>Add a new participant</h2>
       <form>
         <label>Name: 
-        <input type="text" name="name" onChange={(e) => this.onChange(e)} value={this.state.name}/>
+        <input type="text" name="name" onChange={(e) => this.onParticipantInputChange(e)} value={this.state.name}/>
+        <br/>
         </label>
         <label>Mail: 
-        <input type="text" name="mail" onChange={(e) => this.onChange(e)} value={this.state.mail}/>
+        <input type="text" name="mail" onChange={(e) => this.onParticipantInputChange(e)} value={this.state.mail}/>
         </label>
+        <br/>
       </form>
-      <button onClick={(e) => this.handleSubmit(e)} disabled={(!this.state.name)}> Submit </button>
-      <ul>
-      {this.renderVisitors()}
+      <button onClick={(e) => this.handleSubmit(e)} disabled={(!this.state.name)}> Submit </button> 
+      {/* TODO: add a check that the mail of the user is empty here */}
+      <h2>List of participants</h2>
+      <ul> 
+      
+      {this.state.participants.map((e, ix) =>  <li key={ix}> {e.name}, {e.mail}  <button onClick={() => this.removeParticipant(ix)}> DELETE </button> </li>)} 
       </ul>
       <button onClick={() => this.handleDrawBourreauVictime()}> Draw a secret santa </button>
       <ul>
-        {this.renderBoureauVictimes()}
+        {this.state.participantMatchingToDisplay}
       </ul>
     </div>
   );

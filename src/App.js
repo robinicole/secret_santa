@@ -81,7 +81,7 @@ class App extends Component {
       <ul>
       {this.renderVisitors()}
       </ul>
-      <button onClick={() => this.shufflePersons()}> Shuffle </button>
+      <button onClick={() => this.shufflePersons()}> Draw a secret santa </button>
       <ul>
         {this.renferBoureauVictimes()}
       </ul>

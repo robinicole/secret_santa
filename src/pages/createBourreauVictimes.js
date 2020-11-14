@@ -27,7 +27,8 @@ class BourreauVictimesCreation extends Component {
   removePerson(ix)
   {
     this.state.people.splice(ix, 1)
-    this.setState({people: this.state.people})
+    this.setState({people: this.state.people, shuffled_list: []})
+
   }
   renderVisitors()
   {
@@ -62,7 +63,7 @@ class BourreauVictimesCreation extends Component {
     let people = {name: this.state.name, mail: this.state.mail}
     if (true) // (emailIsValid(this.state.mail)) TODO: during the test phase we do not check for valid mail
     {
-    this.setState({people: [...this.state.people, people], name: '', mail: ''})
+    this.setState({people: [...this.state.people, people], name: '', mail: '', shuffled_list: []})
     }
     else
     {

@@ -44,9 +44,11 @@ class BourreauVictimesCreation extends Component {
   renderBoureauVictimes()
   {
     let to_process = this.state.shuffled_list ;
-    return to_process.map((val, ix) => 
+    let to_display = to_process.map((val, ix) => 
     <OneDraw key={ix} ix={ix} offer={to_process[ix]} receiver={to_process[(ix + 1) % to_process.length]}/>
     )
+    shuffleArray(to_display)
+    return to_display
   }
 
   handleDrawBourreauVictime()

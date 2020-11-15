@@ -1,5 +1,6 @@
 import { Component } from "react"; 
 import OneParticipantMatching from '../components/oneParticipantMatching'
+import OneParticipant from '../components/oneParticipant'
 
 // TODO: Those functions should be moved to a utils file 
 function emailIsValid (email) {
@@ -49,7 +50,7 @@ class SecretSantaComponent extends Component {
     this.setState({participantMatchingToDisplay: [...participantMatching]})
   }
 
-  handleDrawBourreauVictime()
+  handleDrawSecretSanta()
   {
     let participants = [...this.state.participants]
     shuffleArray(participants)
@@ -88,10 +89,13 @@ class SecretSantaComponent extends Component {
       {/* TODO: add a check that the mail of the user is empty here */}
       <h2>List of participants</h2>
       <ul> 
-      
-      {this.state.participants.map((e, ix) =>  <li key={ix}> {e.name}, {e.mail}  <button onClick={() => this.removeParticipant(ix)}> DELETE </button> </li>)} 
+      {this.state.participants.map(
+        (e, ix) =>  
+        <OneParticipant key={ix} mail={e.mail} name={e.mail} removeParticipant={() => this.removeParticipant(ix)}/>
+      )
+      }
       </ul>
-      <button onClick={() => this.handleDrawBourreauVictime()}> Draw a secret santa </button>
+      <button onClick={() => this.handleDrawSecretSanta()}> Draw a secret santa </button>
       <h2>Our list of secret santa</h2>
       <ul>
         {this.state.participantMatchingToDisplay}

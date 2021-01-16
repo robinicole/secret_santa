@@ -1,4 +1,10 @@
 import { Component } from "react"; 
+import Button from '@material-ui/core/Button';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
+import CardGiftcardIcon from '@material-ui/icons/CardGiftcard';
+
 let SUCCESS = 'SUCCESS'
 let CLICK_TO_REVEAL =  'Click to reveal'
 class OneParticipantMatching extends Component {
@@ -20,10 +26,15 @@ class OneParticipantMatching extends Component {
     render()
     {
         return (
-            <li key={this.props.ix}>
-                {this.props.offer.name} Gives a gift to 
-                 <button key={`button_victime_${this.props.ix}`} onClick={() => this.handleClick()}> {this.state.button_value} </button>
-            </li>
+            <ListItem key={this.props.ix}>
+                        <ListItemAvatar>
+          <Avatar>
+            <CardGiftcardIcon />
+          </Avatar>
+        </ListItemAvatar>
+                <Button>{this.props.offer.name}</Button>  &nbsp;  Gives a gift to &nbsp;&nbsp;
+                 <Button key={`button_victime_${this.props.ix}`} onClick={() => this.handleClick()} variant="contained"> {this.state.button_value} </Button>
+            </ListItem>
         )
     }
 }

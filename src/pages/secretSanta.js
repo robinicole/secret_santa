@@ -1,6 +1,14 @@
 import { Component } from "react"; 
 import OneParticipantMatching from '../components/oneParticipantMatching'
 import OneParticipant from '../components/oneParticipant'
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import CardContent from '@material-ui/core/CardContent';
+import TextField from '@material-ui/core/TextField';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 
 // TODO: Those functions should be moved to a utils file 
 function emailIsValid (email) {
@@ -25,13 +33,12 @@ class SecretSantaComponent extends Component {
       ], 
       name: '',
       mail: '', 
-      shuffledParticipants: [],
-      participantMatchingToDisplay: null 
+      shufflingIndices: [],
   }
   removeParticipant(ix)
   {
     this.state.participants.splice(ix, 1)
-    this.setState({participants: this.state.participants, participantMatchingToDisplay: []})
+    this.setState({participants: this.state.participants, shufflingIndices:[]})
 
   }
   onParticipantInputChange(e)
@@ -40,22 +47,28 @@ class SecretSantaComponent extends Component {
     new_state[e.target.name] = e.target.value
     this.setState(new_state)
   }
-
-  setupParticipantMatching(participants)
+  renderParticipant(ix, tot)
   {
-    let participantMatching = participants.map((val, ix) => 
-      <OneParticipantMatching key={ix} ix={ix} offer={participants[ix]} receiver={participants[(ix + 1) % participants.length]}/>
+    let i_receiver = this.state.shufflingIndices[(ix + 1)% tot] ; 
+    let i_offer = this.state.shufflingIndices[ix] ; 
+    let offer = this.state.participants[i_offer]
+    let receiver = this.state.participants[i_receiver]
+    return <OneParticipantMatching key={ix} ix={ix} offer={offer} receiver={receiver}/>
+    
+  }
+  renderSecretSantaDraw()
+  {
+    return this.state.shufflingIndices.map(
+      (val, ix) => this.renderParticipant(ix, this.state.participants.length)
     )
-    shuffleArray(participantMatching) // We reshuffle the participants before displaying them
-    this.setState({participantMatchingToDisplay: [...participantMatching]})
   }
 
   handleDrawSecretSanta()
   {
     let participants = [...this.state.participants]
-    shuffleArray(participants)
-    this.setState({shuffledParticipants: participants})
-    this.setupParticipantMatching(participants)
+    let permutation = [...Array(participants.length).keys()];
+    shuffleArray(permutation)
+    this.setState({shufflingIndices: permutation})
   }
 
 
@@ -64,7 +77,11 @@ class SecretSantaComponent extends Component {
     let people = {name: this.state.name, mail: this.state.mail}
     if (true) // (emailIsValid(this.state.mail)) TODO: during the test phase we do not check for valid mail
     {
-    this.setState({participants: [...this.state.participants, people], name: '', mail: '', shuffledParticipants: [], participantMatchingToDisplay:[]})
+    this.setState({
+      participants: [...this.state.participants, people],
+      name: '',
+      mail: '',
+      shufflingIndices: []})
     }
     else
     {
@@ -74,32 +91,49 @@ class SecretSantaComponent extends Component {
   render() {
   return (
     <div>
-      <h2>Add a new participant</h2>
+      <Card >
+      <CardContent>
+      <Typography gutterBottom variant="h5" component="h2">
+            Add a new participant
+        </Typography>
       <form>
-        <label>Name: 
-        <input type="text" name="name" onChange={(e) => this.onParticipantInputChange(e)} value={this.state.name}/>
+        <TextField label="Name" type="text" name="name" onChange={(e) => this.onParticipantInputChange(e)} value={this.state.name}/>
         <br/>
-        </label>
-        <label>Mail: 
-        <input type="text" name="mail" onChange={(e) => this.onParticipantInputChange(e)} value={this.state.mail}/>
-        </label>
+        <TextField label="Mail"type="text" name="mail" onChange={(e) => this.onParticipantInputChange(e)} value={this.state.mail}/>
         <br/>
       </form>
-      <button onClick={(e) => this.handleSubmit(e)} disabled={(!this.state.name)}> Submit </button> 
+      <br/>
+      <Button onClick={(e) => this.handleSubmit(e)} disabled={(!this.state.name)} variant="contained" color="primary"> Submit </Button> 
+
+      </CardContent>
+    </Card>
+
       {/* TODO: add a check that the mail of the user is empty here */}
-      <h2>List of participants</h2>
-      <ul> 
+      <Card >
+      <CardContent>
+      <Typography gutterBottom variant="h5" component="h2">
+      List of participants
+        </Typography>
+      <List>
       {this.state.participants.map(
         (e, ix) =>  
-        <OneParticipant key={ix} mail={e.mail} name={e.mail} removeParticipant={() => this.removeParticipant(ix)}/>
+        <OneParticipant key={ix} mail={e.mail} name={e.name} removeParticipant={() => this.removeParticipant(ix)}/>
       )
       }
-      </ul>
-      <button onClick={() => this.handleDrawSecretSanta()}> Draw a secret santa </button>
-      <h2>Our list of secret santa</h2>
-      <ul>
-        {this.state.participantMatchingToDisplay}
-      </ul>
+      </List>
+      <Button onClick={() => this.handleDrawSecretSanta()}> Draw a secret santa </Button>
+      </CardContent>
+      </Card> 
+      <Card >
+      <CardContent>
+      <Typography gutterBottom variant="h5" component="h2">
+      Our list of secret santa
+        </Typography>
+      <List>
+        {this.renderSecretSantaDraw()}
+      </List>
+      </CardContent>
+      </Card>
     </div>
   );
   }
